@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'tenant' => SetCurrentTenant::class,
+            'tenant.permissions' => \App\Http\Middleware\SetPermissionsTeam::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

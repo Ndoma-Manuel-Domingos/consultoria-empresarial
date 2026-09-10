@@ -1,0 +1,617 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+
+/* ============================================================
+   AJAX SYSTEM
+============================================================ */
+
+[x-cloak] {
+    display: none !important;
+}
+
+
+/* ============================================================
+   PROGRESS BAR
+============================================================ */
+
+.ajax-progress {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 3px;
+
+    z-index: 999999;
+
+    overflow: hidden;
+
+    background: transparent;
+
+}
+
+
+.ajax-progress-bar {
+
+    width: 0;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb 0%,
+            #0ea5e9 50%,
+            #2563eb 100%
+        );
+
+    box-shadow:
+        0 0 8px rgba(37, 99, 235, .65),
+        0 0 18px rgba(14, 165, 233, .35);
+
+    transition:
+        width .25s ease;
+
+}
+
+
+/* ============================================================
+   AJAX TOAST
+============================================================ */
+
+.ajax-toast {
+
+    position: fixed;
+
+    top: 85px;
+    right: 25px;
+
+    z-index: 999998;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    width: 360px;
+    max-width: calc(100vw - 30px);
+
+    min-height: 62px;
+
+    padding: 12px 14px;
+
+    background: #fff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 15px 45px rgba(15, 23, 42, .13);
+
+}
+
+
+.ajax-toast-icon {
+
+    width: 36px;
+    height: 36px;
+
+    flex: 0 0 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+}
+
+
+.ajax-toast-content {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.ajax-toast-title {
+
+    color: var(--dark);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.ajax-toast-message {
+
+    margin-top: 2px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+}
+
+
+.ajax-toast-close {
+
+    width: 25px;
+    height: 25px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #94a3b8;
+
+    cursor: pointer;
+
+    border-radius: 6px;
+
+}
+
+
+.ajax-toast-close:hover {
+
+    color: #475569;
+
+    background: #f1f5f9;
+
+}
+
+
+/* SUCCESS */
+
+.ajax-toast-success {
+
+    border-left: 4px solid #10b981;
+
+}
+
+
+.ajax-toast-success
+.ajax-toast-icon {
+
+    color: #059669;
+
+    background: #ecfdf5;
+
+}
+
+
+/* ERROR */
+
+.ajax-toast-error {
+
+    border-left: 4px solid #ef4444;
+
+}
+
+
+.ajax-toast-error
+.ajax-toast-icon {
+
+    color: #dc2626;
+
+    background: #fef2f2;
+
+}
+
+
+/* INFO */
+
+.ajax-toast-info {
+
+    border-left: 4px solid #0ea5e9;
+
+}
+
+
+.ajax-toast-info
+.ajax-toast-icon {
+
+    color: #0284c7;
+
+    background: #f0f9ff;
+
+}
+
+
+/* ============================================================
+   CONFIRM MODAL
+============================================================ */
+
+.ajax-modal-backdrop {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999997;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(15, 23, 42, .48);
+
+    backdrop-filter:
+        blur(5px);
+
+}
+
+
+.ajax-modal {
+
+    width: 100%;
+
+    max-width: 410px;
+
+    padding: 28px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    text-align: center;
+
+    box-shadow:
+        0 30px 80px rgba(15, 23, 42, .22);
+
+}
+
+
+.ajax-modal-icon {
+
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fef2f2;
+
+    color: #ef4444;
+
+    font-size: 20px;
+
+}
+
+
+.ajax-modal-title {
+
+    margin: 0;
+
+    color: var(--dark);
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+}
+
+
+.ajax-modal-message {
+
+    margin: 9px 0 24px;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+.ajax-modal-actions {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 9px;
+
+}
+
+
+.ajax-modal-actions .btn {
+
+    min-width: 105px;
+
+}
+
+
+/* ============================================================
+   MODAL ANIMATION
+============================================================ */
+
+.ajax-modal-enter {
+
+    animation:
+        ajaxModalEnter .22s
+        cubic-bezier(.34, 1.56, .64, 1);
+
+}
+
+
+.ajax-modal-leave {
+
+    animation:
+        ajaxModalLeave .15s
+        ease-in;
+
+}
+
+
+@keyframes ajaxModalEnter {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(.88)
+            translateY(15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateY(0);
+
+    }
+
+}
+
+
+@keyframes ajaxModalLeave {
+
+    from {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+    to {
+
+        opacity: 0;
+
+        transform:
+            scale(.94);
+
+    }
+
+}
+
+
+/* ============================================================
+   AJAX BUTTON LOADING
+============================================================ */
+
+button:disabled {
+
+    cursor: wait !important;
+
+}
+
+
+button[data-loading="true"] {
+
+    pointer-events: none;
+
+}
+
+
+/* ============================================================
+   VALIDATION
+============================================================ */
+
+.ajax-validation-error {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #ef4444;
+
+    font-size: 10px;
+
+}
+
+
+.is-invalid {
+
+    border-color:
+        #ef4444 !important;
+
+}
+
+
+.is-invalid:focus {
+
+    border-color:
+        #ef4444 !important;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(239, 68, 68, .10) !important;
+
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 575.98px) {
+
+    .ajax-toast {
+
+        top: 70px;
+
+        left: 15px;
+
+        right: 15px;
+
+        width: auto;
+
+    }
+
+
+    .ajax-modal {
+
+        max-width: calc(100vw - 30px);
+
+        padding: 23px;
+
+    }
+
+}
+
+
+
+
+/* =========================================================
+   ROLES / PERFIS
+========================================================= */
+
+.permission-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 13px;
+    margin-bottom: 7px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .18s ease;
+}
+
+.permission-option:hover {
+    background: #fafcff;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .06);
+}
+
+.permission-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.permission-check {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+
+    color: white;
+    background: white;
+
+    transition: all .18s ease;
+}
+
+.permission-check i {
+    opacity: 0;
+    font-size: 10px;
+
+    transform: scale(.5);
+
+    transition: all .15s ease;
+}
+
+.permission-option input:checked + .permission-check {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 3px 8px rgba(37, 99, 235, .20);
+}
+
+.permission-option input:checked + .permission-check i {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.permission-option:has(input:checked) {
+    background: #f8fbff;
+    border-color: #bfdbfe;
+}
+
+.permission-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.permission-name {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.permission-guard {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 9px;
+}
+
+.permission-option.hidden-permission {
+    display: none;
+}
+
+#permissions-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+#permissions-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}

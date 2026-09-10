@@ -107,10 +107,10 @@ return [
 
         /*
          * Change this if you want to use the teams feature and your related model's
-         * foreign key is other than `team_id`.
+         * foreign key is other than `tenant_id`.
          */
 
-        'team_foreign_key' => 'team_id',
+        'team_foreign_key' => 'tenant_id',
     ],
 
     /*
@@ -149,6 +149,8 @@ return [
      */
 
     'teams' => false,
+
+    'team_foreign_key' => 'tenant_id',
 
     /*
      * The class to use to resolve the permissions team id
