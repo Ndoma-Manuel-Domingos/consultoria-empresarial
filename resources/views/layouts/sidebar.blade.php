@@ -1,52 +1,28 @@
-{{-- ======= SIDEBAR ======== --}}
+{{-- ======== SIDEBAR ======== --}}
 <aside class="main-sidebar sidebar-dark-primary elevation-0">
     <a href="{{ route('dashboard') }}" class="brand-link">
         <div class="brand-icon">
             <i class="fas fa-layer-group"></i>
         </div>
-
         <span class="brand-text">
             {{ config('app.name', 'Meu Sistema') }}
         </span>
     </a>
-
     <div class="sidebar">
-
         <nav>
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-                {{-- ========== PRINCIPAL ====== --}}
+                {{-- PRINCIPAL --}}
                 <li class="nav-header">
                     PRINCIPAL
                 </li>
-                {{-- Dashboard --}}
                 <li class="nav-item">
-
                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-
                         <i class="nav-icon fas fa-chart-pie"></i>
-
                         <p>
                             Dashboard
                         </p>
-
-                    </a>
-
-                </li>
-                {{-- Utilizadores --}}
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-
-                        <i class="nav-icon fas fa-users"></i>
-
-                        <p>
-                            Utilizadores
-                        </p>
-
                     </a>
                 </li>
-
-                {{-- Operações --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-file-alt"></i>
@@ -55,8 +31,6 @@
                         </p>
                     </a>
                 </li>
-
-                {{-- Relatórios --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-line"></i>
@@ -66,12 +40,11 @@
                     </a>
                 </li>
 
-                {{-- ======= ORGANIZAÇÃO === --}}
+                {{-- ORGANIZAÇÃO --}}
                 <li class="nav-header">
                     ORGANIZAÇÃO
                 </li>
-                
-                {{-- Organização --}}
+
                 <li class="nav-item">
                     <a href="{{ route('tenant.settings.edit') }}" class="nav-link {{ request()->routeIs('tenant.settings.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-building"></i>
@@ -81,7 +54,6 @@
                     </a>
                 </li>
 
-                {{-- Equipa --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-user-shield"></i>
@@ -91,13 +63,12 @@
                     </a>
                 </li>
 
-                {{-- ====== GESTÃO DE ACESSOS ====== --}}
-
+                {{-- =============  GESTÃO DE ACESSOS =============== --}}
                 @php
-                $permissionsMenuActive = request()->routeIs('tenant.permissions.*') || request()->routeIs('tenant.roles.*');
+                $accessMenuActive = request()->routeIs('roles.*') || request()->routeIs('permissions.*');
                 @endphp
-                <li class="nav-item has-treeview {{ $permissionsMenuActive ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ $permissionsMenuActive ? 'active' : '' }}">
+                <li class="nav-item has-treeview {{ $accessMenuActive ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $accessMenuActive ? 'active' : '' }}">
                         <i class="nav-icon fas fa-user-lock"></i>
                         <p>
                             Gestão de acessos
@@ -105,19 +76,18 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {{-- Perfis de acesso --}}
+                        {{-- Perfis --}}
                         <li class="nav-item">
-                            <a href="{{ route('tenant.roles.index') }}" class="nav-link {{ request()->routeIs('tenant.roles.*') ? 'active' : '' }}">
+                            <a href="{{ route('tenant.roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
                                     Perfis de acesso
                                 </p>
                             </a>
                         </li>
-
                         {{-- Permissões --}}
                         <li class="nav-item">
-                            <a href="{{ route('tenant.permissions.index') }}" class="nav-link {{ request()->routeIs('tenant.permissions.*') ? 'active' : '' }}">
+                            <a href="{{ route('tenant.permissions.index') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
                                     Permissões
@@ -126,8 +96,15 @@
                         </li>
                     </ul>
                 </li>
-
-                {{-- Configurações --}}
+                <li class="nav-item">
+                    <a href="{{ route('tenant.users.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Utilizadores
+                        </p>
+                    </a>
+                </li>
+                {{-- CONFIGURAÇÕES --}}
                 <li class="nav-item">
                     <a href="{{ route('tenant.settings.edit') }}" class="nav-link {{ request()->routeIs('tenant.settings.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cog"></i>

@@ -5,6 +5,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TenantSettingsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,14 +32,6 @@ Route::middleware(['auth', 'tenant', 'tenant.permissions'])->group(function () {
     Route::delete('permissions/destroy', [PermissionController::class, 'destroy'])->name('tenant.permissions.destroy');
 
     // Perfil
-    // Route::get('roles/index', [RoleController::class, 'index'])->name('tenant.roles.index');
-    // Route::get('roles/create', [RoleController::class, 'create'])->name('tenant.roles.create');
-    // Route::get('roles/{role}', [RoleController::class, 'show'])->name('tenant.roles.show');
-    // Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('tenant.roles.edit');
-    // Route::post('roles/store', [RoleController::class, 'store'])->name('tenant.roles.store');
-    // Route::put('roles/update/{role}', [RoleController::class, 'update'])->name('tenant.roles.update');
-    // Route::delete('roles/destroy', [RoleController::class, 'destroy'])->name('tenant.roles.destroy');
-
     Route::resource('roles', RoleController::class)->names([
         'index'   => 'tenant.roles.index',
         'create'  => 'tenant.roles.create',
@@ -48,6 +41,18 @@ Route::middleware(['auth', 'tenant', 'tenant.permissions'])->group(function () {
         'update'  => 'tenant.roles.update',
         'destroy' => 'tenant.roles.destroy',
     ]);
+
+        // Listar utilizadores
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('tenant.users.index');
+
+    // User
+    Route::get('/users/create', [UserController::class, 'create'])->name('tenant.users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('tenant.users.store');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('tenant.users.show');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('tenant.users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('tenant.users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('tenant.users.destroy');
 
 });
 

@@ -1,7 +1,5 @@
-
-{{-- ======= NAVBAR ======== --}}
-<nav class="main-header navbar navbar-expand">
-
+{{-- ============ NAVBAR ========== --}}
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
     {{-- Sidebar toggle --}}
     <ul class="navbar-nav">
         <li class="nav-item">
@@ -10,118 +8,108 @@
             </a>
         </li>
     </ul>
-
     {{-- Search --}}
-    <form class="navbar-search ml-3 d-none d-md-block">
-        <div class="input-group">
-            <input type="search" class="form-control" placeholder="Pesquisar...">
+    <form class="form-inline ml-3 navbar-search" method="GET" action="{{ url()->current() }}" data-ajax-form data-ajax-search>
+        <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" name="search" placeholder="Pesquisar..." value="{{ request('search') }}">
             <div class="input-group-append">
-                <button class="btn">
-                    <i class="fas fa-search text-muted"></i>
+                <button class="btn btn-navbar" type="submit">
+                    <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
     </form>
+
+    {{-- Right navbar --}}
     <ul class="navbar-nav ml-auto">
         {{-- Tenant --}}
         <li class="nav-item">
-            <div class="tenant-selector dropdown-toggle" data-toggle="dropdown">
+            <div class="tenant-selector">
                 <div class="tenant-avatar">
-                    {{ strtoupper(substr($currentTenant->name ?? 'T', 0, 1)) }}
+                    {{ strtoupper(substr(auth()->user()->tenant->name ?? 'T', 0, 1)) }}
                 </div>
                 <div class="tenant-info">
                     <div class="tenant-name">
-                        {{ $currentTenant->name ?? 'Meu Tenant' }}
+                        {{ auth()->user()->tenant->name ?? 'Meu Tenant' }}
                     </div>
                     <div class="tenant-label">
                         Organização atual
                     </div>
                 </div>
-            </div>
-            <div class="dropdown-menu dropdown-menu-right">
-                <h6 class="dropdown-header">
-                    Mudar organização
-                </h6>
-                {{-- Aqui podes listar os tenants aos quais o utilizador pertence. --}}
 
-                @isset($tenants)
-
-                @foreach ($tenants as $tenant)
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-building mr-2 text-muted"></i>
-                    {{ $tenant->name }}
-                </a>
-
-                @endforeach
-                @endisset
-
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-cog mr-2 text-muted"></i>
-                    Configurações da organização
-                </a>
+                <i class="fas fa-chevron-down" style="font-size:9px;color:#64748b;"></i>
             </div>
         </li>
 
         {{-- Notifications --}}
-
         <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
+            <a class="nav-link" href="#" data-toggle="dropdown">
+
                 <i class="far fa-bell"></i>
+
                 <span class="badge badge-danger navbar-badge">
                     3
                 </span>
+
             </a>
+
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+
                 <span class="dropdown-item dropdown-header">
-                    3 notificações
+                    3 Notificações
                 </span>
+
                 <div class="dropdown-divider"></div>
+
                 <a href="#" class="dropdown-item">
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Novo utilizador
-                    <span class="float-right text-muted text-sm">
-                        5 min
-                    </span>
+
+                    <i class="fas fa-info-circle mr-2"></i>
+
+                    Novas notificações
+
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file-invoice mr-2"></i>
-                    Nova operação
-                    <span class="float-right text-muted text-sm">
-                        1h
-                    </span>
-                </a>
+
             </div>
+
         </li>
+
         {{-- User --}}
         <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
+            <a class="nav-link" href="#" data-toggle="dropdown">
                 <div class="user-menu">
+
                     <div class="user-avatar">
+
                         {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+
                     </div>
-                    <span class="d-none d-md-inline">
-                        {{ auth()->user()->name ?? 'Utilizador' }}
-                    </span>
-                    <i class="fas fa-chevron-down fa-xs"></i>
+
+                    <div class="d-none d-md-block">
+
+                        <div style="font-size:12px;font-weight:600;color:#334155;">
+
+                            {{ auth()->user()->name }}
+
+                        </div>
+
+                    </div>
+
+                    <i class="fas fa-chevron-down ml-1" style="font-size:9px;">
+                    </i>
+
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                <a href="#" class="dropdown-item">
                     <i class="fas fa-user mr-2"></i>
                     Meu perfil
                 </a>
-                <a href="{{ route('tenant.settings.edit') }}" class="dropdown-item">
-                    <i class="fas fa-cog mr-2"></i>
-                    Configurações
-                </a>
                 <div class="dropdown-divider"></div>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" data-no-ajax>
                     @csrf
                     <button type="submit" class="dropdown-item">
                         <i class="fas fa-sign-out-alt mr-2"></i>
-                        Sair
+                        Terminar sessão
                     </button>
                 </form>
             </div>
