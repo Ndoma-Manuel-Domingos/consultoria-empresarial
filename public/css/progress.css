@@ -615,3 +615,55 @@ button[data-loading="true"] {
     background: #cbd5e1;
     border-radius: 999px;
 }
+
+
+/* =========================================================
+   PAGINAÇÃO GLOBAL
+   ========================================================= */
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-item .page-link {
+    color: #2563eb;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 0.45rem 0.75rem;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.pagination .page-item:first-child .page-link {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.pagination .page-item:last-child .page-link {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.pagination .page-item .page-link:hover {
+    color: #1d4ed8;
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.pagination .page-item.active .page-link {
+    color: #fff;
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #94a3b8;
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+}
+
+.pagination .page-item + .page-item .page-link {
+    margin-left: 4px;
+}

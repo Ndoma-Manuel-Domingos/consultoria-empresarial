@@ -310,43 +310,21 @@ window.ajaxSystem = function () {
          */
 
         bindForms() {
-
-            document.addEventListener(
-                'submit',
-                async (event) => {
-
-                    const form = event.target;
-
-
-                    if (!(form instanceof HTMLFormElement)) {
-
-                        return;
-
-                    }
-
-
-                    /**
-                     * Formulários marcados como
-                     * data-no-ajax não serão interceptados.
-                     */
-
-                    if (
-                        form.hasAttribute('data-no-ajax')
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    await this.submitForm(form);
-
+            document.addEventListener( 'submit', async (event) => {
+                const form = event.target;
+                if (!(form instanceof HTMLFormElement)) {
+                    return;
                 }
-            );
-
+                /**
+                 * Formulários marcados como
+                 * data-no-ajax não serão interceptados.
+                */
+                if (form.hasAttribute('data-no-ajax')) {
+                    return;
+                }
+                event.preventDefault();
+                await this.submitForm(form);
+            });
         },
 
 
