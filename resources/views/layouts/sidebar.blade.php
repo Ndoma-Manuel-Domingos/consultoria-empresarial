@@ -12,9 +12,9 @@
         <nav>
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 {{-- PRINCIPAL --}}
-                <li class="nav-header">
+                {{-- <li class="nav-header">
                     PRINCIPAL
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-pie"></i>
@@ -23,7 +23,6 @@
                         </p>
                     </a>
                 </li>
-
                 {{-- ================= OPERACOES ================= --}}
                 <li class="nav-item {{ request()->routeIs('tenant.products.*') 
                         || request()->routeIs('tenant.product-lots.*') 
@@ -70,7 +69,14 @@
                         </li>
                     </ul>
                 </li>
-
+                <li class="nav-item">
+                    <a href="{{ route('tenant.invoices.index') }}" class="nav-link  {{ request()->routeIs('tenant.invoices.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>
+                            Facturação
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-line"></i>
@@ -78,24 +84,6 @@
                             Relatórios
                         </p>
                     </a>
-                </li>
-
-                {{-- ORGANIZAÇÃO --}}
-                <li class="nav-header">
-                    ORGANIZAÇÃO
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('tenant.settings.edit') }}" class="nav-link {{ request()->routeIs('tenant.settings.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-building"></i>
-                        <p>
-                            Organização
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-header">
-                    GESTÃO DE CLIENTES
                 </li>
 
                 <li class="nav-item has-treeview {{ request()->routeIs('tenant.clients.*') ? 'menu-open' : '' }}">
@@ -125,7 +113,6 @@
                         </li>
                     </ul>
                 </li>
-
                 {{-- =============  GESTÃO DE ACESSOS =============== --}}
                 @php
                 $accessMenuActive = request()->routeIs('tenant.roles.*') || request()->routeIs('tenant.permissions.*');
@@ -159,7 +146,6 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{ route('tenant.users.index') }}" class="nav-link {{ request()->routeIs('tenant.users.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
@@ -178,10 +164,36 @@
                     </a>
                 </li>
 
-
-                {{-- ========================= --}}
+                {{-- RECEPÇÃO --}}
+                <li class="nav-item has-treeview {{ request()->routeIs('tenant.reception.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('tenant.reception.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-concierge-bell"></i>
+                        <p>
+                            Recepção
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('tenant.reception.index') }}" class="nav-link {{ request()->routeIs('tenant.reception.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>
+                                    Atendimentos
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('tenant.reception.create') }}" class="nav-link {{ request()->routeIs('tenant.reception.create') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>
+                                    Novo atendimento
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+          
                 {{-- POS --}}
-                {{-- ========================= --}}
                 <li class="nav-item">
                     <a href="{{ route('tenant.pos.index') }}" class="nav-link {{ request()->routeIs('tenant.pos.*') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i>
@@ -201,10 +213,7 @@
                         </span>
                     </a>
                 </li>
-
-                {{-- ========================= --}}
                 {{-- VENDAS --}}
-                {{-- ========================= --}}
                 <li class="nav-item">
                     <a href="{{ route('tenant.sales.index') }}" class="nav-link {{ request()->routeIs('tenant.sales.*') ? 'active' : '' }}">
                         <i class="fas fa-receipt"></i>

@@ -1325,27 +1325,17 @@
         const companyFields = document.querySelectorAll('.client-company-field');
 
         function toggleCompanyFields() {
-
             const isCompany = typeSelect.value === 'company';
-
             companyFields.forEach(function(field) {
-
                 field.style.display = isCompany ? '' : 'none';
-
             });
-
         }
 
         if (typeSelect) {
-
             toggleCompanyFields();
-
             typeSelect.addEventListener('change', toggleCompanyFields);
-
         }
-
     });
-
 </script>
 
 @endpush

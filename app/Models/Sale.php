@@ -25,6 +25,15 @@ class Sale extends Model
         'created_by',
         'cancelled_by',
         'cancelled_at',
+
+        'document_type',
+        'series',
+        'fiscal_number',
+        'issued_at',
+        'currency',
+        'taxable_amount',
+        'exempt_amount',
+        'balance_due',
     ];
 
     protected $casts = [
@@ -37,6 +46,10 @@ class Sale extends Model
         'total' => 'decimal:2',
         'paid_amount' => 'decimal:2',
         'change_amount' => 'decimal:2',
+
+        'taxable_amount' => 'decimal:2',
+        'exempt_amount' => 'decimal:2',
+        'balance_due' => 'decimal:2',
     ];
 
     public function items(): HasMany
@@ -47,6 +60,11 @@ class Sale extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(SalePayment::class);
+    }
+
+    public function receptionPayment()
+    {
+        return $this->hasOne(ReceptionPayment::class);
     }
 
     public function client(): BelongsTo

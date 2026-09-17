@@ -4,11 +4,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\StockMovimentController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductLotController;
+use App\Http\Controllers\ReceptionController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TenantSettingsController;
@@ -20,6 +21,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware(['auth', 'tenant', 'tenant.permissions'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,15 +50,19 @@ Route::middleware(['auth', 'tenant', 'tenant.permissions'])->group(function () {
     Route::put('/clients/{client}', [ClientController::class, 'update'])->middleware('permission:client.edit')->name('tenant.clients.update');
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->middleware('permission:client.destroy')->name('tenant.clients.destroy');
 
+    // POS
     Route::get('/products/search',[SaleController::class, 'search'])->name('tenant.sales.products');
     Route::resource('sales', SaleController::class)->except(['edit', 'update'])->names('tenant.sales');
     Route::post('/{sale}/cancel',[SaleController::class, 'cancel'])->name('tenant.sales.cancel');
-    // POS
     Route::get('/pos', [PosController::class, 'index'])->name('tenant.pos.index');
-    //Route::get('/pos/products/search',[POSController::class, 'searchProducts'])->name('pos.products.search');
     Route::get('/pos/products/{id}',[POSController::class, 'product'])->name('pos.products.show');
     Route::post('/pos/checkout',[POSController::class, 'checkout'])->name('pos.checkout');
-
+    //Route::get('/pos/products/search',[POSController::class, 'searchProducts'])->name('pos.products.search');
+    
+    Route::resource('invoices', InvoiceController::class)->names('tenant.invoices');
+    Route::get('/invoices/{sale}/invoice', [InvoiceController::class, 'invoice'])->name('tenant.invoices.invoice');
+    Route::post('/invoices/{sale}/cancel', [InvoiceController::class, 'cancel'])->name('tenant.invoices.cancel');
+    Route::get('/invoices/products/search', [InvoiceController::class, 'products'])->name('tenant.invoices.products');
 
     // produtod
     Route::get('/products', [ProductController::class, 'index'])->middleware('permission:product.view')->name('tenant.products.index');
@@ -92,6 +98,26 @@ Route::middleware(['auth', 'tenant', 'tenant.permissions'])->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->middleware('permission:user.edit')->name('tenant.users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->middleware('permission:user.destroy')->name('tenant.users.destroy');
 
+    Route::get('/reception/index', [ReceptionController::class, 'index'])->name('tenant.reception.index');
+    Route::get('/reception/create', [ReceptionController::class, 'create'])->name('tenant.reception.create');
+    Route::post('/reception/store', [ReceptionController::class, 'store'])->name('tenant.reception.store');
+    Route::get('/reception/{appointment}', [ReceptionController::class, 'show'])->name('tenant.reception.show');
+    Route::get('/reception/{appointment}/edit', [ReceptionController::class, 'edit'])->name('tenant.reception.edit');
+    Route::put('/reception/{appointment}', [ReceptionController::class, 'update'])->name('tenant.reception.update');
+    Route::delete('/reception/{appointment}', [ReceptionController::class, 'destroy'])->name('tenant.reception.destroy');
+
+    Route::get('/reception/{appointment}/triage', [ReceptionController::class, 'triage'])->name('tenant.reception.triage');
+    Route::post('/reception/{appointment}/triage', [ReceptionController::class, 'saveTriage'])->name('tenant.reception.triage.store');
+    Route::post('/reception/{appointment}/services', [ReceptionController::class, 'saveServices'])->name('tenant.reception.services.store');
+    Route::get('/reception/{appointment}/payment', [ReceptionController::class, 'payment'])->name('tenant.reception.payment');
+    Route::post('/reception/{appointment}/payment', [ReceptionController::class, 'savePayment'])->name('tenant.reception.payment.store');
+
+    Route::get('/reception/{appointment}/ficha', [ReceptionController::class, 'ficha'])->name('tenant.reception.ficha');
+    Route::post('/reception/{appointment}/refer', [ReceptionController::class, 'refer'])->name('tenant.reception.refer');
+    Route::post('/reception/{appointment}/start', [ReceptionController::class, 'start'])->name('tenant.reception.start');
+    Route::post('/reception/{appointment}/cancel', [ReceptionController::class, 'cancel'])->name('tenant.reception.cancel');
+
 });
+
 
 require __DIR__.'/auth.php';

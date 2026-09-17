@@ -8,18 +8,17 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\SalePayment;
 use App\Models\StockMovement;
+use App\Services\SalesService;
 use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
 
 class SaleController extends Controller
 {
-    public function __construct(protected StockService $stockService) {}
-
+    public function __construct(protected StockService $stockService, protected SalesService $saleService) {}
     /**
      * LISTA
      */
@@ -112,11 +111,6 @@ class SaleController extends Controller
     public function store(Request $request)
     {
         $tenantId = session('tenant_id');
-      
-        Log::info('STORE VENDA CHAMADO', [
-            'time' => now()->format('Y-m-d H:i:s.u'),
-            'ip' => $request->ip(),
-        ]);
 
         $validated = $request->validate([
             'client_id' => ['nullable','integer','exists:clients,id',],
@@ -151,7 +145,7 @@ class SaleController extends Controller
 
             $sale = DB::transaction(function () use ($validated, $tenantId) {
 
-                $number = $this->generateSaleNumber($tenantId);
+                $number = $this->stockService->generateNumber($tenantId, "FR");
 
                 $subtotal = 0;
                 $taxAmount = 0;
@@ -303,12 +297,14 @@ class SaleController extends Controller
                     'paid_amount' => $paidAmount,
                     'change_amount' => $change,
                     'payment_method' => $paymentMethod,
+                    'series' => "FR",
+                    'issued_at'=> now(),
                 ]);
 
                 return $sale;
             });
 
-            return redirect()->route('tenant.sales.show',$sale)->with('success','Venda registada com sucesso.');
+            return redirect()->route('tenant.sales.show', $sale)->with('success','Venda registada com sucesso.');
 
         } catch (RuntimeException $e) {
             return back()
@@ -352,80 +348,13 @@ class SaleController extends Controller
 
         try {
             DB::transaction(function () use ($sale) {
+
                 $sale->load([
                     'items.product',
                     'items.lots.productLot',
                 ]);
-                foreach ($sale->items as $item) {
-                    /*
-                     * Se teve lotes:
-                     * devolvemos para os mesmos lotes.
-                     */
-                    if ($item->lots->count()) {
 
-                        foreach ($item->lots as $itemLot) {
-                            $lot = $itemLot->productLot;
-                            $before =  (float) $lot->current_quantity;
-                            $quantity =  (float) $itemLot->quantity;
-                            $after = $before + $quantity;
-                            $lot->current_quantity = $after;
-
-                            $lot->save();
-
-                            StockMovement::create([
-                                'tenant_id' => $sale->tenant_id,
-                                'product_id' => $item->product_id,
-                                'product_lot_id' => $lot->id,
-                                'type' => 'return_in',
-                                'quantity' => $quantity,
-                                'stock_before' => $before,
-                                'stock_after' => $after,
-                                'unit_cost' => $itemLot->unit_cost,
-                                'total_cost' => $itemLot->total_cost,
-                                'reference' => $sale->number,
-                                'document_type' => 'sale_cancellation',
-                                'document_number' => $sale->number,
-                                'reason' => 'Anulação da venda',
-                                'movement_date' => now(),
-                                'created_by' => Auth::user()->id,
-                            ]);
-                        }
-
-                    } else {
-
-                        /*
-                         * Produto sem lote.
-                         */
-                        $stock = $this->stockService->getProductStock($sale->tenant_id, $item->product_id);
-                        $quantity = (float) $item->quantity;
-                        $before = $stock;
-                        $after = $before + $quantity;
-                        $unitCost = (float) $item->product->cost_price;
-
-                        StockMovement::create([
-                            'tenant_id' => $sale->tenant_id,
-                            'product_id' => $item->product_id,
-                            'product_lot_id' => null,
-                            'type' => 'return_in',
-                            'quantity' => $quantity,
-                            'stock_before' => $before,
-                            'stock_after' => $after,
-                            'unit_cost' => $unitCost,
-                            'total_cost' => $quantity * $unitCost,
-                            'reference' => $sale->number,
-                            'document_type' => 'sale_cancellation',
-                            'document_number' => $sale->number,
-                            'reason' => 'Anulação da venda',
-                            'movement_date' => now(),
-                            'created_by' => Auth::user()->id,
-                        ]);
-                    }
-                }
-                $sale->update([
-                    'status' => 'cancelled',
-                    'cancelled_by' => Auth::user()->id,
-                    'cancelled_at' => now(),
-                ]);
+                $this->stockService->cancel($sale);
             });
 
             return back()->with( 'success', 'Venda anulada e stock reposto com sucesso.');
@@ -435,24 +364,6 @@ class SaleController extends Controller
                 'sale' => 'Não foi possível anular a venda: ' . $e->getMessage(),
             ]);
         }
-    }
-
-    /**
-     * Número da venda.
-     */
-    protected function generateSaleNumber(int $tenantId): string 
-    {
-        $prefix = 'VEN-' . now()->format('Ym') . '-';
-
-        $last = Sale::query()->where('tenant_id', $tenantId)->where('number', 'like', $prefix . '%')->orderByDesc('id')->lockForUpdate()->first();
-
-        $sequence = 1;
-
-        if ($last) {
-            $lastNumber = (int) Str::after($last->number, $prefix);
-            $sequence = $lastNumber + 1;
-        }
-        return $prefix . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
 
     protected function authorizeSale( Sale $sale): void 

@@ -74,4 +74,9 @@ class Client extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function receptionAppointments()
+    {
+        return $this->hasMany(ReceptionAppointment::class);
+    }
 }

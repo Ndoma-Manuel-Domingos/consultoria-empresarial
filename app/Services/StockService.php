@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\ProductLot;
+use App\Models\Sale;
 use App\Models\StockMovement;
 use App\Models\SaleItem;
 use App\Models\SaleItemLot;
@@ -221,4 +222,89 @@ class StockService
             'created_by' => Auth::user()->id,
         ]);
     }
+
+    public function cancel(Sale $sale)
+    {
+        foreach ($sale->items as $item) {
+            if ($item->lots->count()) {
+
+                foreach ($item->lots as $itemLot) {
+                    $lot = $itemLot->productLot;
+                    $before =  (float) $lot->current_quantity;
+                    $quantity =  (float) $itemLot->quantity;
+                    $after = $before + $quantity;
+                    $lot->current_quantity = $after;
+
+                    $lot->save();
+
+                    StockMovement::create([
+                        'tenant_id' => $sale->tenant_id,
+                        'product_id' => $item->product_id,
+                        'product_lot_id' => $lot->id,
+                        'type' => 'return_in',
+                        'quantity' => $quantity,
+                        'stock_before' => $before,
+                        'stock_after' => $after,
+                        'unit_cost' => $itemLot->unit_cost,
+                        'total_cost' => $itemLot->total_cost,
+                        'reference' => $sale->number,
+                        'document_type' => 'sale_cancellation',
+                        'document_number' => $sale->number,
+                        'reason' => 'Anulação da venda',
+                        'movement_date' => now(),
+                        'created_by' => Auth::user()->id,
+                    ]);
+                }
+
+            } else {
+
+                /*
+                    * Produto sem lote.
+                    */
+                $stock = $this->getProductStock($sale->tenant_id, $item->product_id);
+                $quantity = (float) $item->quantity;
+                $before = $stock;
+                $after = $before + $quantity;
+                $unitCost = (float) $item->product->cost_price;
+
+                StockMovement::create([
+                    'tenant_id' => $sale->tenant_id,
+                    'product_id' => $item->product_id,
+                    'product_lot_id' => null,
+                    'type' => 'return_in',
+                    'quantity' => $quantity,
+                    'stock_before' => $before,
+                    'stock_after' => $after,
+                    'unit_cost' => $unitCost,
+                    'total_cost' => $quantity * $unitCost,
+                    'reference' => $sale->number,
+                    'document_type' => 'sale_cancellation',
+                    'document_number' => $sale->number,
+                    'reason' => 'Anulação da venda',
+                    'movement_date' => now(),
+                    'created_by' => Auth::user()->id,
+                ]);
+            }
+        }
+        $sale->update([
+            'status' => 'cancelled',
+            'cancelled_by' => Auth::user()->id,
+            'cancelled_at' => now(),
+        ]);
+    }
+
+    public function generateNumber( int $tenantId, ?string $series): string 
+    {
+        $series = $series ?: 'FT';
+        $last = Sale::query()->where('tenant_id', $tenantId)->where('series', $series)->lockForUpdate()->orderByDesc('id')->first();
+        $sequence = 1;
+
+        if ($last) {
+            $number = preg_replace( '/^' . preg_quote($series, '/') . '-/', '', $last->number);
+            if (is_numeric($number)) {
+                $sequence = ((int) $number) + 1;
+            }
+        }
+        return $series . '-' . str_pad($sequence, 6, '0', STR_PAD_LEFT);
+    }    
 }

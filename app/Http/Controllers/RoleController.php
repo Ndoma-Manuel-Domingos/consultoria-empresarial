@@ -26,7 +26,7 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-public function index(Request $request): View
+    public function index(Request $request): View
     {
         $tenantId = $this->tenantId();
 

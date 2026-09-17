@@ -104,6 +104,11 @@ class Product extends Model
         return $this->belongsTo(Client::class, 'supplier_id');
     }
 
+    public function receptionServices()
+    {
+        return $this->hasMany(ReceptionService::class);
+    }
+
     public function lots(): HasMany
     {
         return $this->hasMany(ProductLot::class);

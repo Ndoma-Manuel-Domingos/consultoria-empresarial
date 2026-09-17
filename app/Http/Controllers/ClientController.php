@@ -12,16 +12,18 @@ use Illuminate\View\View;
 
 class ClientController extends Controller
 {
+    private function tenantId(): int
+    {
+        $tenantId = session('tenant_id');
+        abort_unless($tenantId, 403, 'Nenhuma organização selecionada.');
+        return (int) $tenantId;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $tenantId = session('tenant_id');
-
-        abort_unless( $tenantId, 403, 'Nenhuma organização selecionada.');
-
-        $query = Client::query()->where('tenant_id', $tenantId);
+        $query = Client::query()->where('tenant_id', $this->tenantId());
 
         /*
         |--------------------------------------------------------------------------
